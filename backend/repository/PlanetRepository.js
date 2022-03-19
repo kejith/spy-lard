@@ -54,7 +54,6 @@ async function getPlanetByUser(user) {
         }
     })
 
-    console.log(planets)
 
     return planets
 }
