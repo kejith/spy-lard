@@ -20,3 +20,18 @@ app.use('/', indexRouter);
 app.use('/galaxy', galaxyRouter);
 
 module.exports = app;
+
+// secure
+var appSSL = express();
+
+appSSL.use(logger('dev'));
+appSSL.use(cors())
+appSSL.use(express.json());
+appSSL.use(express.urlencoded({ extended: false }));
+appSSL.use(cookieParser());
+appSSL.use(express.static(path.join(__dirname, 'public')));
+
+appSSL.use('/', indexRouter);
+appSSL.use('/galaxy', galaxyRouter);
+
+module.exports = appSSL;

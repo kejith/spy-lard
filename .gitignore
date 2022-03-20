@@ -10,3 +10,6 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+backend/cert.pem
+backend/chain.pem
+backend/privkey.pem

@@ -7,21 +7,7 @@ exports.galaxy_create_post = function(req, res) {
     const {galaxy, system, planets} = req.body
     var hadError = false
 
-    planets.forEach(element => {
-        if(element) {
-            const {userID} = element   
-            const data = {galaxy, system, ...element} 
-
-            if(parseInt(userID) && parseInt(userID) != 0){
-                try {
-                    PlanetRepo.upsertPlanet(data)
-                } catch(e) {
-                    hadError = true
-                    console.error(e)
-                }
-            }
-        }
-    });
+    PlanetRepo.upsertSystem(galaxy, system, planets);
 
     if(!hadError) {
         res.status(200).send("Success");
@@ -33,6 +19,17 @@ exports.galaxy_create_post = function(req, res) {
 
 exports.galaxy_planet_by_user = async function(req, res) {
     const user = req.query.user
-    var planets = await PlanetRepo.getPlanetByUser(user)
-    res.status(200).json(planets)
+    if ( typeof user === "string" &&  user != "" ) {
+        var planets = await PlanetRepo.findPlanetsByUser(user)
+        res.status(200).json(planets)
+    } else {
+        res.status(400).send("User is not a String or empty")
+    }     
+}
+
+exports.get_system = async function(req, res) {
+    const galaxy = parseInt(req.query.galaxy)
+    const system = parseInt(req.query.system)
+    var systemLastModified = await PlanetRepo.systemLastModified(galaxy, system)
+    res.status(200).json(systemLastModified)
 }

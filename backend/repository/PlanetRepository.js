@@ -3,9 +3,37 @@ const { PrismaClient } = require('@prisma/client')
 const Planet = require('../models/Planet')
 const prisma = new PrismaClient()
 
-async function upsertPlanet(p) {
+async function upsertSystem(galaxy, system, planets) {
+    var promises = []
+    planets.forEach(element => {
+        if(element) {
+            const {userID} = element   
+            const data = {galaxy, system, ...element} 
+
+            if(parseInt(userID) && parseInt(userID) != 0){
+                try {
+                    promises.push(upsertPlanet(data))
+                } catch(e) {
+                    hadError = true
+                    console.error(e)
+                }
+            }
+        }
+    })
+    
+
     try {
-        const resPlanet = await prisma.planet.upsert({
+        var result = await prisma.$transaction(promises)
+    } catch(e) {
+        hadError = true
+        console.error(e)
+    }
+
+}
+
+ function upsertPlanet(p) {
+    try {
+       return prisma.planet.upsert({
             where: {
                 planetPosition : {
                     galaxy: p.galaxy,
@@ -44,10 +72,13 @@ async function upsertPlanet(p) {
     }
 }
 
-async function getPlanetByUser(user) {
+async function findPlanetsByUser(user) {
     const planets = await prisma.user.findMany({
         where: {
-            name: user
+            name: {
+                contains: user,
+                mode: 'insensitive'
+            }
         },
         include: {
             planets: true
@@ -57,47 +88,30 @@ async function getPlanetByUser(user) {
 
     return planets
 }
-/*
-const pool = new Pool({
-    user: "root",
-    host: "localhost",
-    database: "spylard",
-    password: "root",
-    port: "5432"
-})
 
-class PlanetRepository {
-    static upsertPlanetQuery = `
-        INSERT INTO planets.planets (
-            galaxy, system, position, user_id, name, avatar, moon 
-        )
-        VALUES( 
-            $1, $2, $3, $4, $5, $6, $7
-        )  
-        ON CONFLICT (galaxy, system, position) 
-        DO 
-            UPDATE SET
-                user_id = $4,
-                name = $5, 
-                avatar = $6,
-                moon = $7
-    `
+async function systemLastModified(galaxy, system) {
+    const updatedAt = await prisma.planet.findMany({
+        take: 1,
+        select: {
+            updatedAt: true
+        },
+        where: {
+            galaxy: galaxy,
+            system: system
+        },
+        orderBy: [{updatedAt: 'desc'}],
 
-    static upsert(p) {
-        var values = [p.galaxy, p.system, p.position, p.userID, p.name, p.avatar, p.moon]
-        var coordinates = p.coordinateString()
-        
-        pool.query(this.upsertPlanetQuery, values, (err, res) => {
-            if (err) {
-                console.log(err.stack)
-            } else {
-                console.log(`${coordinates.padStart(8, ' ')} - Name: ${p.name.padStart(20, ' ')} - User: ${p.userID+``.padStart(20, ' ')} - Moon: ${p.moon}`)
-            }
-        })        
+    })
+
+    if (updatedAt.length > 0) {
+        return updatedAt[0]
+    } else {
+        return ""
     }
 }
-*/
 module.exports = {
+    upsertSystem: upsertSystem,
     upsertPlanet,
-    getPlanetByUser
+    findPlanetsByUser,
+    systemLastModified,
 }

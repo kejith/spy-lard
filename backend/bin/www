@@ -3,31 +3,52 @@
 /**
  * Module dependencies.
  */
-
-var app = require('../app');
+ const fs = require('fs');
+ var app = require('../app');
+ var appSSL = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
+var https = require('https');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.BACKEND_PORT || '3000');
-app.set('port', port);
+ var port = normalizePort(process.env.BACKEND_PORT || '80');
+ app.set('port', port);
+
+ var portSSL = normalizePort('443');
+appSSL.set('port', portSSL);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+// Certificate
+const privateKey = fs.readFileSync('./privkey.pem', 'utf8');
+const certificate = fs.readFileSync('./cert.pem', 'utf8');
+const ca = fs.readFileSync('./chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+
+ var server = http.createServer(app);
+ var serverSSL = https.createServer(credentials, app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+ server.listen(port);
+ server.on('error', onError);
+ server.on('listening', onListening);
+
+ serverSSL.listen(portSSL);
+ serverSSL.on('error', onError);
+ serverSSL.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
