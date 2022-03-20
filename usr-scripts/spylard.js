@@ -23,10 +23,12 @@ function basename(path) {
     return path.split('/').reverse()[0];
 }
 
+const baseurl = "https://kejith.de"
+
 
 function sendSystem(data) {
     const parameters = {
-        url: "http://localhost:3000/galaxy/system/update",
+        url: `${baseurl}/galaxy/system/update`,
         data: JSON.stringify(data),
         contentType: 'application/json',
         type: 'POST',
@@ -203,7 +205,7 @@ function updateSystem() {
     document.getElementById("search-colony-btn").addEventListener("click", function (event) {
         event.preventDefault();
         var inputUser = $("#search-colony-input-user").val()
-        $.get(`http://localhost:3000/galaxy/system/planets?user=${inputUser}`, (data) => {
+        $.get(`${baseurl}/galaxy/system/planets?user=${inputUser}`, (data) => {
             $("#colony-search-results-wrapper > table").html("")
 
             console.log(data)
