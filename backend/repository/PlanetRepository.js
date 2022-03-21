@@ -91,10 +91,6 @@ async function findPlanetsByUser(user) {
 
 async function systemLastModified(galaxy, system) {
     const updatedAt = await prisma.planet.findMany({
-        take: 1,
-        select: {
-            updatedAt: true
-        },
         where: {
             galaxy: galaxy,
             system: system
@@ -104,7 +100,7 @@ async function systemLastModified(galaxy, system) {
     })
 
     if (updatedAt.length > 0) {
-        return updatedAt[0]
+        return updatedAt
     } else {
         return ""
     }
