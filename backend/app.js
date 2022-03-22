@@ -6,6 +6,7 @@ var cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var galaxyRouter = require('./routes/galaxy');
+var allianceRouter = require('./routes/alliance');
 
 var app = express();
 
@@ -33,5 +34,6 @@ appSSL.use(express.static(path.join(__dirname, 'public')));
 
 appSSL.use('/', indexRouter);
 appSSL.use('/galaxy', galaxyRouter);
+appSSL.use('/alliance', allianceRouter);
 
 module.exports = appSSL;

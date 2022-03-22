@@ -1,93 +1,99 @@
-const {Pool, Client} = require('pg')
+const { Pool, Client } = require('pg')
 const { PrismaClient } = require('@prisma/client')
 const Planet = require('../models/Planet')
-const prisma = new PrismaClient()
+const UserRepo = require("../repository/UserRepository")
+const AllianceRepo = require("../repository/AllianceRepository")
+const prisma = new PrismaClient({log: ['info','warn', 'error'],})
 
 async function upsertSystem(galaxy, system, planets) {
     var promises = []
-    planets.forEach(element => {
-        if(element) {
-            const {userID} = element   
-            const data = {galaxy, system, ...element} 
+    planets.forEach( planet => {
+        if (planet) {
+            const data = { galaxy, system, ...planet }
+            if(data.userID !== undefined) {
+                promises.push(upsertPlanet(data))
 
-            if(parseInt(userID) && parseInt(userID) != 0){
-                try {
-                    promises.push(upsertPlanet(data))
-                } catch(e) {
-                    hadError = true
-                    console.error(e)
+                if(data.alliance !== "") {
+                    promises.push(prisma.user.update({
+                        where: { id: data.userID },
+                        data: {
+                            alliance: {
+                                connect: {
+                                    id: data.alliance.id
+                                }
+                            }
+                        }
+                    }))
                 }
             }
         }
     })
     
-
     try {
-        var result = await prisma.$transaction(promises)
-    } catch(e) {
-        hadError = true
-        console.error(e)
-    }
-
-}
-
- function upsertPlanet(p) {
-    try {
-       return prisma.planet.upsert({
-            where: {
-                planetPosition : {
-                    galaxy: p.galaxy,
-                    system: p.system,
-                    position: p.position
-                }
-            },
-            update: {
-                name: p.name,
-                moon: p.moon,
-                avatar: p.avatar,
-                user: {
-                    connectOrCreate: {                    
-                        create: { id: p.userID, name: p.user },
-                        where: { id: p.userID }
-                    },
-                }   
-            },
-            create: {
-                galaxy: p.galaxy,
-                system: p.system,
-                position: p.position,
-                name: p.name,
-                moon: p.moon,
-                avatar: p.avatar,
-                user: {
-                    connectOrCreate: {                    
-                        create: { id: p.userID, name: p.user },
-                        where: { id: p.userID }
-                    },
-                }            
-            }
-        })
-    } catch(e) {
+        await prisma.$transaction(promises)
+    } catch (e) {
         console.log(e)
     }
 }
 
-async function findPlanetsByUser(user) {
-    const planets = await prisma.user.findMany({
+async function exists(model, condition) {
+    return await model
+        .findFirst(condition)
+        .then(r => Boolean(r))
+}
+
+function upsertPlanet(p, _prisma = undefined) {
+    const pris = (_prisma !== undefined) ? _prisma : prisma 
+    var allianceUpsert = undefined
+    if (p.alliance != '') {
+        var allianceUpsert = {
+            connectOrCreate: {
+                where: { id: p.alliance.id },
+                create: { id: p.alliance.id, name: p.alliance.name },
+            }
+        }
+    }
+
+    var userUpsert = {
+        connectOrCreate: {
+            where: { id: p.userID },
+            create: { id: p.userID, name: p.user, alliance: allianceUpsert },
+        },
+    }
+
+    return pris.planet.upsert({
         where: {
-            name: {
-                contains: user,
-                mode: 'insensitive'
+            planetPosition: {
+                galaxy: p.galaxy,
+                system: p.system,
+                position: p.position
             }
         },
+        update: {
+            name: p.name,
+            moon: p.moon,
+            avatar: p.avatar,
+        },
+        create: {
+            galaxy: p.galaxy,
+            system: p.system,
+            position: p.position,
+            name: p.name,
+            moon: p.moon,
+            avatar: p.avatar,
+            user: userUpsert
+        },
         include: {
-            planets: true
+            user: {
+                include: {
+                    alliance: true
+                }
+            }
         }
     })
-
-
-    return planets
 }
+
+
 
 async function systemLastModified(galaxy, system) {
     const updatedAt = await prisma.planet.findMany({
@@ -95,7 +101,7 @@ async function systemLastModified(galaxy, system) {
             galaxy: galaxy,
             system: system
         },
-        orderBy: [{updatedAt: 'desc'}],
+        orderBy: [{ updatedAt: 'desc' }],
 
     })
 
@@ -108,6 +114,5 @@ async function systemLastModified(galaxy, system) {
 module.exports = {
     upsertSystem: upsertSystem,
     upsertPlanet,
-    findPlanetsByUser,
     systemLastModified,
 }

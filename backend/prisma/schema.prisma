@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -14,23 +15,31 @@ model Planet {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // coords
-  galaxy   Int
-  system   Int
-  position Int
+  galaxy    Int
+  system    Int
+  position  Int
 
   // planet details
-  name     String  @db.VarChar(255)
-  moon     Boolean @default(false)
-  avatar   String
-  
+  name   String  @db.VarChar(255)
+  moon   Boolean @default(false)
+  avatar String
+
   // user
-  user User @relation(fields: [userID], references: [id])
-  userID   Int
+  user   User @relation(fields: [userID], references: [id])
+  userID Int
   @@unique([galaxy, system, position], name: "planetPosition")
 }
 
 model User {
-  id      Int      @id 
-  name    String   
-  planets Planet[]
+  id         Int       @id
+  name       String
+  alliance   Alliance? @relation(fields: [allianceID], references: [id])
+  allianceID Int?
+  planets    Planet[]
+}
+
+model Alliance {
+  id    Int    @id
+  name  String
+  users User[]
 }
