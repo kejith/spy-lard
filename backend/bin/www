@@ -96,7 +96,7 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "production") {
   // Certificate
   const privateKey = fs.readFileSync('./privkey.pem', 'utf8');
   const certificate = fs.readFileSync('./cert.pem', 'utf8');

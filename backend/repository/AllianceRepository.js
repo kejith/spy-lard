@@ -21,13 +21,15 @@ function upsert(alliance, _prisma = undefined) {
 function getMembers(allianceTag, _prisma = undefined) {
     const pris = (_prisma !== undefined) ? _prisma : prisma 
     return pris.alliance.findMany({
-        select: { id: true, name: true, users: true },
         where: { 
             name: { 
                 contains: allianceTag,
                 mode: 'insensitive'
             } 
         },
+        include: {
+            alliance: true,
+        }
     })
 }
 
