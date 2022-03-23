@@ -28,7 +28,11 @@ function getMembers(allianceTag, _prisma = undefined) {
             } 
         },
         include: {
-            alliance: true,
+            users: {
+                include: {
+                    planets: true
+                }
+            }
         }
     })
 }
