@@ -3,9 +3,9 @@
 /**
  * Module dependencies.
  */
- const fs = require('fs');
- var app = require('../app');
- var appSSL = require('../app');
+const fs = require('fs');
+var app = require('../app');
+var appSSL = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
 var https = require('https');
@@ -32,9 +32,9 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
- server.listen(port);
- server.on('error', onError);
- server.on('listening', onListening);
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -98,21 +98,26 @@ function onListening() {
 
 if (process.env.NODE_ENV !== "production") {
   // Certificate
-  const privateKey = fs.readFileSync('./privkey.pem', 'utf8');
-  const certificate = fs.readFileSync('./cert.pem', 'utf8');
-  const ca = fs.readFileSync('./chain.pem', 'utf8');
+  try {
+    const privateKey = fs.readFileSync('./privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('./cert.pem', 'utf8');
+    const ca = fs.readFileSync('./chain.pem', 'utf8');
 
-  const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca
-  };
+    const credentials = {
+      key: privateKey,
+      cert: certificate,
+      ca: ca
+    };
 
-  var portSSL = normalizePort('443');
-  appSSL.set('port', portSSL);
+    var portSSL = normalizePort('443');
+    appSSL.set('port', portSSL);
 
-  var serverSSL = https.createServer(credentials, app);
-  serverSSL.listen(portSSL);
-  serverSSL.on('error', onError);
-  serverSSL.on('listening', onListening);
+    var serverSSL = https.createServer(credentials, app);
+    serverSSL.listen(portSSL);
+    serverSSL.on('error', onError);
+    serverSSL.on('listening', onListening);
+  } catch (e) {
+    console.error("SSL Server could not be started")
+    console.log(e)
+  }
 }

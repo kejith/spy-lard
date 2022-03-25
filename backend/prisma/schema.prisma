@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
 }
 
@@ -27,6 +27,61 @@ model Planet {
   // user
   user   User @relation(fields: [userID], references: [id])
   userID Int
+
+  // ressources
+  metal     Int?
+  crystal   Int?
+  deuterium Int? 
+
+  // ships
+  smallCargo     Int?
+  largeCargo     Int?
+  lightFighter   Int?
+  heavyFighter   Int?
+  cruiser        Int?
+  battleship     Int?
+  colonyShio     Int?
+  recycler       Int?
+  espionageProbe Int?
+  bomber         Int?
+  satalites      Int?
+  destroyer      Int?
+  deathstar      Int?
+  battlecruiser  Int?
+
+  // defensive
+  rocketLauncher        Int?
+  lightLaser            Int?
+  heavyLaser            Int?
+  gaussCanon            Int?
+  ionCanon              Int?
+  plasmaCanon           Int?
+  smallShield           Int?
+  largeShield           Int?
+  antiBalisticMissile   Int?
+  interplanetaryMissile Int?
+
+  // structures
+  metalMine            Int?
+  crystalMine          Int?
+  deuteriumSynthesizer Int?
+  solarPlant           Int?
+  fusionPlant          Int?
+  roboticsFactory      Int?
+  naniteFactory        Int?
+  shipyard             Int?
+  metalStorge          Int?
+  crystalStorage       Int?
+  deteriumTank         Int?
+  researchLab          Int?
+  terraformer          Int?
+  allianceDepot        Int?
+  sensorPhalanx        Int?
+  jumpGate             Int?
+  missileSilo          Int?
+
+  espionages Espionage[] 
+
   @@unique([galaxy, system, position], name: "planetPosition")
 }
 
@@ -36,10 +91,120 @@ model User {
   alliance   Alliance? @relation(fields: [allianceID], references: [id])
   allianceID Int?
   planets    Planet[]
+
+  // research
+  espionage              Int?
+  computer               Int?
+  weapons                Int?
+  shield                 Int?
+  armour                 Int?
+  energy                 Int?
+  hyperspace             Int?
+  combustionDrive        Int?
+  impulseDrive           Int?
+  hyperspaceDrive        Int?
+  laserTech              Int?
+  ion                    Int?
+  plasma                 Int?
+  igfn                   Int?
+  astropyhsics           Int?
+  productionMaxMetall    Int?
+  productionMaxCrystal   Int?
+  productionMaxDeuterium Int?
+  graviton               Int?  
 }
 
 model Alliance {
   id    Int    @id
   name  String
   users User[]
+}
+
+model Espionage {
+  id  Int @id @default(autoincrement())
+  pid Int @unique
+
+  date        DateTime @default(now())
+  detailLevel Int
+
+  // coords
+  galaxy   Int
+  system   Int
+  position Int
+
+  // ressources
+  metal     Int
+  crystal   Int
+  deuterium Int
+
+  // ships
+  smallCargo     Int?
+  largeCargo     Int?
+  lightFighter   Int?
+  heavyFighter   Int?
+  cruiser        Int?
+  battleship     Int?
+  colonyShio     Int?
+  recycler       Int?
+  espionageProbe Int?
+  bomber         Int?
+  satalites      Int?
+  destroyer      Int?
+  deathstar      Int?
+  battlecruiser  Int?
+
+  // defensive
+  rocketLauncher        Int?
+  lightLaser            Int?
+  heavyLaser            Int?
+  gaussCanon            Int?
+  ionCanon              Int?
+  plasmaCanon           Int?
+  smallShield           Int?
+  largeShield           Int?
+  antiBalisticMissile   Int?
+  interplanetaryMissile Int?
+
+  // structures
+  metalMine            Int?
+  crystalMine          Int?
+  deuteriumSynthesizer Int?
+  solarPlant           Int?
+  fusionPlant          Int?
+  roboticsFactory      Int?
+  naniteFactory        Int?
+  shipyard             Int?
+  metalStorge          Int?
+  crystalStorage       Int?
+  deteriumTank         Int?
+  researchLab          Int?
+  terraformer          Int?
+  allianceDepot        Int?
+  sensorPhalanx        Int?
+  jumpGate             Int?
+  missileSilo          Int?
+
+  // research
+  espionage              Int?
+  computer               Int?
+  weapons                Int?
+  shield                 Int?
+  armour                 Int?
+  energy                 Int?
+  hyperspace             Int?
+  combustionDrive        Int?
+  impulseDrive           Int?
+  hyperspaceDrive        Int?
+  laserTech              Int?
+  ion                    Int?
+  plasma                 Int?
+  igfn                   Int?
+  astropyhsics           Int?
+  productionMaxMetall    Int?
+  productionMaxCrystal   Int?
+  productionMaxDeuterium Int?
+  graviton               Int?
+
+  planet Planet? @relation(fields: [galaxy, system, position], references: [galaxy, system, position])
+
 }

@@ -71,7 +71,11 @@ async function findColonies(user) {
             }
         },
         include: {
-            planets: true,
+            planets: {
+                include: {
+                    espionages: true,
+                }
+            },
             alliance: true
         }
     })
