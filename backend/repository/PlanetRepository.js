@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 const Planet = require('../models/Planet')
 const UserRepo = require("../repository/UserRepository")
 const AllianceRepo = require("../repository/AllianceRepository")
-const prisma = new PrismaClient({log: ['info','warn', 'error'],})
+const prisma = new PrismaClient({log: [ 'info','warn', 'error'],})
 
 async function upsertSystem(galaxy, system, planets) {
     var promises = []
@@ -40,6 +40,26 @@ async function exists(model, condition) {
     return await model
         .findFirst(condition)
         .then(r => Boolean(r))
+}
+
+async function deletePlanets(planets) {
+    planets.forEach(async planet => {
+        var params = {
+            where: {
+                planetPosition: {
+                    galaxy: planet.galaxy,
+                    system: planet.system,
+                    position: planet.position
+                }          
+            }
+        }
+        console.log(params)
+        try {
+            await prisma.planet.delete(params)
+        } catch (error) {
+            console.log(error)
+        }
+    });
 }
 
 function upsertPlanet(p, _prisma = undefined) {
@@ -115,4 +135,5 @@ module.exports = {
     upsertSystem: upsertSystem,
     upsertPlanet,
     systemLastModified,
+    deletePlanets
 }
