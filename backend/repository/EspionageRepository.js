@@ -42,14 +42,13 @@ async function create(report) {
 
     // update planet structures
     if(level >= LevelStructures) 
-        updateData = {...updateData, ...report.strucures}
+        updateData = {...updateData, ...report.structures}
 
     if(level >= LevelAll){
         updateData.user = {
             update: {...report.research}
         }
     }
-
 
     return await prisma.$transaction([
         // create espionage
