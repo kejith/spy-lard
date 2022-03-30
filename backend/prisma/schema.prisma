@@ -44,7 +44,7 @@ model Planet {
   recycler       Int?
   espionageProbe Int?
   bomber         Int?
-  satalites      Int?
+  satellites     Int?
   destroyer      Int?
   deathstar      Int?
   battlecruiser  Int?
@@ -148,7 +148,7 @@ model Espionage {
   recycler       Int?
   espionageProbe Int?
   bomber         Int?
-  satalites      Int?
+  satellites     Int?
   destroyer      Int?
   deathstar      Int?
   battlecruiser  Int?
