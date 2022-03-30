@@ -50,6 +50,11 @@ async function create(report) {
         }
     }
 
+    if(updateData.satalite) {
+        console.error("Somebody is still trying to insert espionages with an old version.")
+        return
+    }
+
     return await prisma.$transaction([
         // create espionage
         prisma.espionage.create({ data: espionage }),
