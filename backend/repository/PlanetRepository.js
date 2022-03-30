@@ -5,6 +5,18 @@ const UserRepo = require("../repository/UserRepository")
 const AllianceRepo = require("../repository/AllianceRepository")
 const prisma = new PrismaClient({log: [ 'info','warn', 'error'],})
 
+async function findMoons(galaxy) {
+    return prisma.planet.findMany({
+        where: {
+            galaxy: galaxy,
+            moon: true
+        },
+        include: {
+            user: true,
+        }
+    }) 
+}
+
 async function upsertSystem(galaxy, system, planets) {
     var promises = []
     planets.forEach( planet => {
