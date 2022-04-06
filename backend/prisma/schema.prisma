@@ -12,6 +12,8 @@ datasource db {
 }
 
 model Planet {
+  id Int @id @default(autoincrement())
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // coords
@@ -21,8 +23,13 @@ model Planet {
 
   // planet details
   name   String  @db.VarChar(255)
-  moon   Boolean @default(false)
+  hasMoon   Boolean @default(false)
   avatar String
+
+  moonID Int?
+
+  moon Planet? @relation("AttachedMoon", fields: [moonID], references: [id])
+  belongsTo Planet? @relation("AttachedMoon")
 
   // user
   user   User @relation(fields: [userID], references: [id])

@@ -4,6 +4,7 @@ const Planet = require("../models/Planet");
 const { createCipheriv } = require("crypto");
 const PlanetRepository = require("../repository/PlanetRepository");
 
+
 // Handle Author create on POST.
 exports.galaxy_create_post = function (req, res) {
     const { galaxy, system, planets } = req.body;
@@ -37,6 +38,24 @@ exports.get_system = async function (req, res) {
     );
     res.status(200).json(systemLastModified);
 };
+
+exports.get_moons = async function (req, res) {
+    try {
+        var moons = []
+        if(req.query.galaxy != undefined) {
+            const parsedGalaxy = parseInt(req.query.galaxy)
+            moons = await PlanetRepo.findMoons(parsedGalaxy)
+        } else {
+            moons = await PlanetRepo.findMoons()
+        }
+        res.status(200).json(moons)
+    } catch(e) {
+        console.error(e)
+        res.status(500).json({})
+    }
+
+}
+
 /**
  *
  *

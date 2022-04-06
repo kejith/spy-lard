@@ -3,29 +3,41 @@ const { PrismaClient } = require('@prisma/client')
 const Planet = require('../models/Planet')
 const UserRepo = require("../repository/UserRepository")
 const AllianceRepo = require("../repository/AllianceRepository")
-const prisma = new PrismaClient({log: [ 'info','warn', 'error'],})
+const prisma = new PrismaClient({ log: ['info', 'warn', 'error'], })
 
-async function findMoons(galaxy) {
+async function findMoons(galaxy = undefined) {
     return prisma.planet.findMany({
         where: {
             galaxy: galaxy,
-            moon: true
+            hasMoon: true
         },
         include: {
             user: true,
+        },
+        orderBy: [
+            { galaxy: 'asc' },
+            { system: 'asc' },
+            { position: 'asc' }
+        ],
+        include: {
+            user: {
+                include: {
+                    alliance: true
+                }
+            }
         }
-    }) 
+    })
 }
 
 async function upsertSystem(galaxy, system, planets) {
     var promises = []
-    planets.forEach( planet => {
+    planets.forEach(planet => {
         if (planet) {
             const data = { galaxy, system, ...planet }
-            if(data.userID !== undefined) {
+            if (data.userID !== undefined) {
                 promises.push(upsertPlanet(data))
 
-                if(data.alliance !== "") {
+                if (data.alliance !== "") {
                     promises.push(prisma.user.update({
                         where: { id: data.userID },
                         data: {
@@ -40,7 +52,7 @@ async function upsertSystem(galaxy, system, planets) {
             }
         }
     })
-    
+
     try {
         await prisma.$transaction(promises)
     } catch (e) {
@@ -62,7 +74,7 @@ async function deletePlanets(planets) {
                     galaxy: planet.galaxy,
                     system: planet.system,
                     position: planet.position
-                }          
+                }
             }
         }
         console.log(params)
@@ -75,7 +87,7 @@ async function deletePlanets(planets) {
 }
 
 function upsertPlanet(p, _prisma = undefined) {
-    const pris = (_prisma !== undefined) ? _prisma : prisma 
+    const pris = (_prisma !== undefined) ? _prisma : prisma
     var allianceUpsert = undefined
     if (p.alliance != '') {
         var allianceUpsert = {
@@ -147,5 +159,6 @@ module.exports = {
     upsertSystem: upsertSystem,
     upsertPlanet,
     systemLastModified,
-    deletePlanets
+    deletePlanets,
+    findMoons
 }
