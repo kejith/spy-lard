@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/check', function(req, res, next) {
-  res.status(200).json({version: '0.5.2'})
+  res.status(200).json({version: '0.5.3'})
 });
 
 router.post('/', function(req, res, next) {
