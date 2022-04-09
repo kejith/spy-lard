@@ -97,12 +97,30 @@ function upsertPlanet(p, _prisma = undefined) {
             }
         }
     }
-
+    
+    
+    
     var userUpsert = {
         connectOrCreate: {
             where: { id: p.userID },
             create: { id: p.userID, name: p.user, alliance: allianceUpsert },
         },
+    }
+    
+    var moon = undefined
+    if(p.hasMoon) {
+        var moon = {
+            create: {
+                galaxy: p.galaxy,
+                system: p.system,
+                position: p.position,
+                name: "Moon",
+                hasMoon: false,
+                avatar: "",
+                planetType: "moon",
+                user: userUpsert,
+            }
+        }
     }
 
     return pris.planet.upsert({
@@ -110,24 +128,28 @@ function upsertPlanet(p, _prisma = undefined) {
             planetPosition: {
                 galaxy: p.galaxy,
                 system: p.system,
-                position: p.position
+                position: p.position,
+                planetType: "planet"
             }
         },
         update: {
             name: p.name,
-            moon: p.moon,
+            hasMoon: p.hasMoon,
             avatar: p.avatar,
+            moon: moon,
         },
         create: {
             galaxy: p.galaxy,
             system: p.system,
             position: p.position,
             name: p.name,
-            moon: p.moon,
+            hasMoon: p.hasMoon,
             avatar: p.avatar,
-            user: userUpsert
+            user: userUpsert,
+            moon: moon,
         },
         include: {
+            moon: true,
             user: {
                 include: {
                     alliance: true

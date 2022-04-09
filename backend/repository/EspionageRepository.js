@@ -65,7 +65,8 @@ async function create(report) {
                 planetPosition: {
                     galaxy: report.coords.galaxy,
                     system: report.coords.system,
-                    position: report.coords.position
+                    position: report.coords.position,
+                    planetType: 'planet'
                 }            
             },
             data: updateData

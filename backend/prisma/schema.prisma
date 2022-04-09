@@ -21,6 +21,8 @@ model Planet {
   system    Int
   position  Int
 
+  planetType String @default("planet")
+
   // planet details
   name   String  @db.VarChar(255)
   hasMoon   Boolean @default(false)
@@ -89,7 +91,7 @@ model Planet {
 
   espionages Espionage[] 
 
-  @@unique([galaxy, system, position], name: "planetPosition")
+  @@unique([galaxy, system, position, planetType], name: "planetPosition")
 }
 
 model User {
@@ -133,6 +135,9 @@ model Espionage {
 
   date        DateTime @default(now())
   detailLevel Int
+
+
+  planetType String @default("planet")
 
   // coords
   galaxy   Int
@@ -212,6 +217,6 @@ model Espionage {
   productionMaxDeuterium Int?
   graviton               Int?
 
-  planet Planet? @relation(fields: [galaxy, system, position], references: [galaxy, system, position])
+  planet Planet? @relation(fields: [galaxy, system, position, planetType], references: [galaxy, system, position, planetType])
 
 }
