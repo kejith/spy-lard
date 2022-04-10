@@ -37,18 +37,23 @@ async function upsertSystem(galaxy, system, planets) {
             if (data.userID !== undefined) {
                 promises.push(upsertPlanet(data))
 
-                if (data.alliance !== "") {
-                    promises.push(prisma.user.update({
-                        where: { id: data.userID },
-                        data: {
-                            alliance: {
-                                connect: {
-                                    id: data.alliance.id
-                                }
-                            }
-                        }
-                    }))
+                var userData = {
+                    inactive: data.inactive,
+                    umode: data.umode,              
                 }
+
+                if (data.alliance !== "") {
+                    userData.alliance =  {
+                        connect: {
+                            id: data.alliance.id
+                        }
+                    }
+                }
+
+                promises.push(prisma.user.update({
+                    where: { id: data.userID },
+                    data: userData
+                }))
             }
         }
     })
@@ -73,7 +78,8 @@ async function deletePlanets(planets) {
                 planetPosition: {
                     galaxy: planet.galaxy,
                     system: planet.system,
-                    position: planet.position
+                    position: planet.position,
+                    planetType: "planet"
                 }
             }
         }
@@ -103,7 +109,7 @@ function upsertPlanet(p, _prisma = undefined) {
     var userUpsert = {
         connectOrCreate: {
             where: { id: p.userID },
-            create: { id: p.userID, name: p.user, alliance: allianceUpsert },
+            create: { id: p.userID, name: p.user, inactive: p.inactive, umode: p.umode, alliance: allianceUpsert },
         },
     }
     
@@ -158,8 +164,6 @@ function upsertPlanet(p, _prisma = undefined) {
         }
     })
 }
-
-
 
 async function systemLastModified(galaxy, system) {
     const updatedAt = await prisma.planet.findMany({

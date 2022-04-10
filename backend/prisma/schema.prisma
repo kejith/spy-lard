@@ -101,6 +101,9 @@ model User {
   allianceID Int?
   planets    Planet[]
 
+  umode Boolean @default(false)
+  inactive Int  @default(0)
+
   // research
   espionage              Int?
   computer               Int?

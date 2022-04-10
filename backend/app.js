@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var galaxyRouter = require('./routes/galaxy');
 var allianceRouter = require('./routes/alliance');
 var espionageRouter = require('./routes/espionage');
+var mapRouter = require('./routes/map');
 
 var app = express();
 
@@ -39,5 +40,6 @@ appSSL.use('/', indexRouter);
 appSSL.use('/galaxy', galaxyRouter);
 appSSL.use('/alliance', allianceRouter);
 appSSL.use('/espionage', espionageRouter);
+appSSL.use('/map', mapRouter);
 
 module.exports = appSSL;

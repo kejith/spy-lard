@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "inactive" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "umode" BOOLEAN NOT NULL DEFAULT false;
