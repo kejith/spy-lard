@@ -89,7 +89,7 @@ model Planet {
   jumpGate             Int?
   missileSilo          Int?
 
-  espionages Espionage[] 
+  //espionages Espionage[] 
 
   @@unique([galaxy, system, position, planetType], name: "planetPosition")
 }
@@ -132,94 +132,95 @@ model Alliance {
   users User[]
 }
 
-model Espionage {
-  id  Int @id @default(autoincrement())
-  pid Int @unique
 
-  date        DateTime @default(now())
-  detailLevel Int
+// model Espionage {
+//   id  Int @id @default(autoincrement())
+//   pid Int @unique
+
+//   date        DateTime @default(now())
+//   detailLevel Int
 
 
-  planetType String @default("planet")
+//   planetType String @default("planet")
 
-  // coords
-  galaxy   Int
-  system   Int
-  position Int
+//   // coords
+//   galaxy   Int
+//   system   Int
+//   position Int
 
-  // ressources
-  metal     Int
-  crystal   Int
-  deuterium Int
+//   // ressources
+//   metal     Int
+//   crystal   Int
+//   deuterium Int
 
-  // ships
-  smallCargo     Int?
-  largeCargo     Int?
-  lightFighter   Int?
-  heavyFighter   Int?
-  cruiser        Int?
-  battleship     Int?
-  colonyShio     Int?
-  recycler       Int?
-  espionageProbe Int?
-  bomber         Int?
-  satellites     Int?
-  destroyer      Int?
-  deathstar      Int?
-  battlecruiser  Int?
+//   // ships
+//   smallCargo     Int?
+//   largeCargo     Int?
+//   lightFighter   Int?
+//   heavyFighter   Int?
+//   cruiser        Int?
+//   battleship     Int?
+//   colonyShio     Int?
+//   recycler       Int?
+//   espionageProbe Int?
+//   bomber         Int?
+//   satellites     Int?
+//   destroyer      Int?
+//   deathstar      Int?
+//   battlecruiser  Int?
 
-  // defensive
-  rocketLauncher        Int?
-  lightLaser            Int?
-  heavyLaser            Int?
-  gaussCanon            Int?
-  ionCanon              Int?
-  plasmaCanon           Int?
-  smallShield           Int?
-  largeShield           Int?
-  antiBalisticMissile   Int?
-  interplanetaryMissile Int?
+//   // defensive
+//   rocketLauncher        Int?
+//   lightLaser            Int?
+//   heavyLaser            Int?
+//   gaussCanon            Int?
+//   ionCanon              Int?
+//   plasmaCanon           Int?
+//   smallShield           Int?
+//   largeShield           Int?
+//   antiBalisticMissile   Int?
+//   interplanetaryMissile Int?
 
-  // structures
-  metalMine            Int?
-  crystalMine          Int?
-  deuteriumSynthesizer Int?
-  solarPlant           Int?
-  fusionPlant          Int?
-  roboticsFactory      Int?
-  naniteFactory        Int?
-  shipyard             Int?
-  metalStorge          Int?
-  crystalStorage       Int?
-  deteriumTank         Int?
-  researchLab          Int?
-  terraformer          Int?
-  allianceDepot        Int?
-  sensorPhalanx        Int?
-  jumpGate             Int?
-  missileSilo          Int?
+//   // structures
+//   metalMine            Int?
+//   crystalMine          Int?
+//   deuteriumSynthesizer Int?
+//   solarPlant           Int?
+//   fusionPlant          Int?
+//   roboticsFactory      Int?
+//   naniteFactory        Int?
+//   shipyard             Int?
+//   metalStorge          Int?
+//   crystalStorage       Int?
+//   deteriumTank         Int?
+//   researchLab          Int?
+//   terraformer          Int?
+//   allianceDepot        Int?
+//   sensorPhalanx        Int?
+//   jumpGate             Int?
+//   missileSilo          Int?
 
-  // research
-  espionage              Int?
-  computer               Int?
-  weapons                Int?
-  shield                 Int?
-  armour                 Int?
-  energy                 Int?
-  hyperspace             Int?
-  combustionDrive        Int?
-  impulseDrive           Int?
-  hyperspaceDrive        Int?
-  laserTech              Int?
-  ion                    Int?
-  plasma                 Int?
-  igfn                   Int?
-  astropyhsics           Int?
-  productionMaxMetall    Int?
-  productionMaxCrystal   Int?
-  productionMaxDeuterium Int?
-  graviton               Int?
+//   // research
+//   espionage              Int?
+//   computer               Int?
+//   weapons                Int?
+//   shield                 Int?
+//   armour                 Int?
+//   energy                 Int?
+//   hyperspace             Int?
+//   combustionDrive        Int?
+//   impulseDrive           Int?
+//   hyperspaceDrive        Int?
+//   laserTech              Int?
+//   ion                    Int?
+//   plasma                 Int?
+//   igfn                   Int?
+//   astropyhsics           Int?
+//   productionMaxMetall    Int?
+//   productionMaxCrystal   Int?
+//   productionMaxDeuterium Int?
+//   graviton               Int?
 
-  planet Planet? @relation(fields: [galaxy, system, position, planetType], references: [galaxy, system, position, planetType])
+//   planet Planet? @relation(fields: [galaxy, system, position, planetType], references: [galaxy, system, position, planetType])
 
-}
+// }

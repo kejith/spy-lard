@@ -95,16 +95,16 @@ async function deletePlanets(planets) {
 function upsertPlanet(p, _prisma = undefined) {
     const pris = (_prisma !== undefined) ? _prisma : prisma
     var allianceUpsert = undefined
-    if (p.alliance != '') {
-        var allianceUpsert = {
+    
+    if (typeof p.alliance === 'object') {
+        allianceUpsert = {
             connectOrCreate: {
                 where: { id: p.alliance.id },
                 create: { id: p.alliance.id, name: p.alliance.name },
             }
         }
+        
     }
-    
-    
     
     var userUpsert = {
         connectOrCreate: {
@@ -143,6 +143,7 @@ function upsertPlanet(p, _prisma = undefined) {
             hasMoon: p.hasMoon,
             avatar: p.avatar,
             moon: moon,
+            user: userUpsert,
         },
         create: {
             galaxy: p.galaxy,

@@ -19,9 +19,10 @@ function upsert(user, _prisma = undefined) {
 
 
     if (user.alliance) {
-        query.update.alliance = { connect: { id: user.alliance.id } }
         query.create.alliance = { connect: { id: user.alliance.id } }
+        query.update.alliance = { connect: { id: user.alliance.id } }
     }
+
     return pris.user.upsert(query)
 }
 
@@ -71,11 +72,12 @@ async function findColonies(user) {
             }
         },
         include: {
-            planets: {
-                include: {
-                    espionages: true,
-                }
-            },
+            planets: true, 
+            // {
+            //     include: {
+            //         espionages: true,
+            //     }
+            // },
             alliance: true
         }
     })
