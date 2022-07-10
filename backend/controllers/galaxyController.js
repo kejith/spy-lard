@@ -50,7 +50,7 @@ exports.get_moons = async function (req, res) {
         }
         res.status(200).json(moons)
     } catch(e) {
-        console.error(e)
+-        console.error(e)
         res.status(500).json({})
     }
 
